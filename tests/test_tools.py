@@ -13,3 +13,10 @@ class ToolTests(unittest.TestCase):
         with self.assertRaises(PermissionError): call_tool("shell.exec", {"argv": ["pwd"]}, self.cfg)
 
 if __name__ == "__main__": unittest.main()
+
+class SystemInfoTests(unittest.TestCase):
+    def test_system_info(self):
+        info = call_tool("system.info", {}, {})
+        self.assertIn("platform", info)
+        self.assertIn("python", info)
+        self.assertIn("termux", info)
