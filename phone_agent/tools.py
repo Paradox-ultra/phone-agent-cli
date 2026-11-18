@@ -6,7 +6,7 @@ from .security import safe_path
 def _workspace(cfg):
     return Path(cfg["workspace"]).expanduser().resolve()
 
-def _system_info(_):
+def _system_info(_cfg, _args):
     return {"platform": platform.platform(), "python": platform.python_version(),
             "prefix": os.environ.get("PREFIX"), "home": str(Path.home()),
             "termux": bool(os.environ.get("TERMUX_VERSION")),
@@ -63,13 +63,13 @@ def _shell(cfg, a):
     p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, timeout=timeout, check=False, shell=False)
     return {"returncode": p.returncode, "stdout": p.stdout[-12000:], "stderr": p.stderr[-12000:]}
 
-def _termux_battery(_):
+def _termux_battery(_cfg, _args):
     p = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=8)
     if p.returncode: raise RuntimeError(p.stderr.strip() or "Termux:API battery command failed")
     import json
     return json.loads(p.stdout)
 
-def _clipboard(_):
+def _clipboard(_cfg, _args):
     p = subprocess.run(["termux-clipboard-get"], capture_output=True, text=True, timeout=8)
     if p.returncode: raise RuntimeError(p.stderr.strip() or "Termux:API clipboard command failed")
     return {"text": p.stdout[:20000]}
